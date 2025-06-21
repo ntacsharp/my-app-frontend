@@ -6,10 +6,10 @@ export default function Home() {
   const [message, setMessage] = useState('');
 
   useEffect(() => {
-    fetch('http://localhost:5000/api/hello')
+    fetch('http://192.168.122.190:32337/api/hello')
       .then(res => res.json())
       .then(data => setMessage(data.message))
-      .catch(err => setMessage('Failed to fetch'));
+      .catch(err => setMessage('Failed to fetch' + err.message));
   }, []);
   return (
     <div style={{ padding: 50 }}>
