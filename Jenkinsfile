@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         IMAGE_NAME = 'tuanasanh/my-app-frontend-image'
-        DOCKERHUB_CREDENTIALS = '6ca79578-df2d-4da9-9041-b7ee15a6a300'
+        DOCKER_HUB_CREDENTIALS = '6ca79578-df2d-4da9-9041-b7ee15a6a300'
         GITHUB_CREDENTIALS = '6a37d77f-827f-402f-83ba-57957d4e6bec' 
         DEPLOY_REPO_URL = 'github.com/ntacsharp/my-app-deploy.git'
     }
