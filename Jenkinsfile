@@ -169,7 +169,7 @@ pipeline {
                     }
 
                     sh """
-                        sed -i 's/\\(frontend:\\s*\\n\\s*image:\\s*\\n\\s*repository:.*\\n\\s*tag:\\s*\\).*$/\\1"${env.TAG_NAME}"/' cloned-deploy-repo/values.yaml
+                        sed -i '/frontend:/,/image:/s/\\(tag:\\s*\\)".*"/\\1"${env.TAG_NAME}"/' cloned-deploy-repo/values.yaml
                     """
 
                     echo "Updated tag to ${env.TAG_NAME} in values.yaml"
