@@ -1,10 +1,15 @@
 pipeline {
-    agent any
+    agent {
+        kubernetes {
+            label 'docker-builder'
+            defaultContainer 'docker'
+        }
+    }
 
     environment {
         IMAGE_NAME = 'tuanasanh/my-app-frontend-image'
-        DOCKER_HUB_CREDENTIALS = '6ca79578-df2d-4da9-9041-b7ee15a6a300'
-        GITHUB_CREDENTIALS = '6a37d77f-827f-402f-83ba-57957d4e6bec' 
+        DOCKER_HUB_CREDENTIALS = 'dockerhub_cre'
+        GITHUB_CREDENTIALS = 'github_cre' 
         DEPLOY_REPO_URL = 'github.com/ntacsharp/my-app-deploy.git'
     }
 
