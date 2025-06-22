@@ -2,7 +2,7 @@ pipeline {
     agent {
         kubernetes {
             label 'docker-builder'
-            // defaultContainer 'docker'
+            defaultContainer 'docker'
         }
     }
 
@@ -14,6 +14,14 @@ pipeline {
     }
 
     stages {
+        stage('Prepare') {
+            steps {
+                sh '''
+                    apk add --no-cache git bash
+                '''
+            }
+        }
+
         stage('Checkout') {
             steps {
                 echo "Checking out source code"
