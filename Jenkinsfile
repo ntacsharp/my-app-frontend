@@ -13,14 +13,6 @@ pipeline {
     }
 
     stages {
-        stage('Prepare') {
-            steps {
-                sh '''
-                    apk add --no-cache git bash
-                '''
-            }
-        }
-
         stage('Checkout') {
             steps {
                 echo "Checking out source code"
