@@ -77,7 +77,7 @@ pipeline {
         stage('Check Docker') {
             steps {
                 container('docker'){
-                    // script {
+                    script {
                         echo "Checking Docker"
 
                         sh '''
@@ -99,7 +99,7 @@ pipeline {
                         }
 
                         echo "Docker version: ${dockerVersion}"
-                    // }
+                    }
                 }
             }
         }
