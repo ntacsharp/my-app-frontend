@@ -2,6 +2,7 @@ pipeline {
     agent {
         kubernetes {
             label 'docker-builder'
+            defaultContainer 'docker'
         }
     }
 
@@ -70,6 +71,11 @@ pipeline {
             steps {
                 script {
                     echo "Checking Docker"
+
+                    sh '''
+                        echo ">> PATH: $PATH"
+                        echo ">> Check docker binary:"
+                    '''
 
                     def dockerExists = sh(script: 'which docker || echo "not_found"', returnStdout: true).trim()
 
