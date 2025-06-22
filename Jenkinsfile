@@ -117,18 +117,20 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
-                script {
-                    echo "Building Docker image..."
+                container('docker'){
+                    script {
+                        echo "Building Docker image..."
 
-                    if (!env.TAG_NAME) {
-                        error "Tag_name not found"
+                        if (!env.TAG_NAME) {
+                            error "Tag_name not found"
+                        }
+
+                        sh """
+                            docker build -t ${env.IMAGE_NAME}:${env.TAG_NAME} .
+                        """
+
+                        echo "Image ${env.IMAGE_NAME}:${env.TAG_NAME} built successfully"
                     }
-
-                    sh """
-                        docker build -t ${env.IMAGE_NAME}:${env.TAG_NAME} .
-                    """
-
-                    echo "Image ${env.IMAGE_NAME}:${env.TAG_NAME} built successfully"
                 }
             }
         }
@@ -136,26 +138,28 @@ pipeline {
 
         stage('Push Docker Image to Docker Hub') {
             steps {
-                script {
-                    echo "Pushing to Docker Hub..."
+                container('docker'){
+                    script {
+                        echo "Pushing to Docker Hub..."
 
-                    if (!env.TAG_NAME || !env.IMAGE_NAME) {
-                        error "TAG_NAME or IMAGE_NAME not found."
+                        if (!env.TAG_NAME || !env.IMAGE_NAME) {
+                            error "TAG_NAME or IMAGE_NAME not found."
+                        }
+
+                        withCredentials([usernamePassword(
+                            credentialsId: env.DOCKER_HUB_CREDENTIALS,
+                            usernameVariable: 'DOCKER_USER',
+                            passwordVariable: 'DOCKER_PASS'
+                        )]) {
+                            sh """
+                                echo "${DOCKER_PASS}" | docker login -u "${DOCKER_USER}" --password-stdin
+                                docker push ${env.IMAGE_NAME}:${env.TAG_NAME}
+                                docker logout
+                            """
+                        }
+
+                        echo "Successfully pushed Docker image: ${env.IMAGE_NAME}:${env.TAG_NAME}"
                     }
-
-                    withCredentials([usernamePassword(
-                        credentialsId: env.DOCKER_HUB_CREDENTIALS,
-                        usernameVariable: 'DOCKER_USER',
-                        passwordVariable: 'DOCKER_PASS'
-                    )]) {
-                        sh """
-                            echo "${DOCKER_PASS}" | docker login -u "${DOCKER_USER}" --password-stdin
-                            docker push ${env.IMAGE_NAME}:${env.TAG_NAME}
-                            docker logout
-                        """
-                    }
-
-                    echo "Successfully pushed Docker image: ${env.IMAGE_NAME}:${env.TAG_NAME}"
                 }
             }
         }
