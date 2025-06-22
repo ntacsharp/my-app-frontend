@@ -207,9 +207,9 @@ pipeline {
                     sh "cat cloned-deploy-repo/values.yaml | grep -A5 frontend"
 
 
-                    sh '''
+                    sh """
                         sed -i '/frontend:/,/^[^ ]/s/\\(tag:\\s*\\)".*"/\\1"${env.TAG_NAME}"/' cloned-deploy-repo/values.yaml
-                    '''
+                    """
 
                     sh "cat cloned-deploy-repo/values.yaml | grep -A5 frontend"
 
