@@ -68,23 +68,21 @@ pipeline {
 
         stage('Check Docker') {
             steps {
-                container('docker'){
-                    script {
-                        echo "Checking Docker"
+                script {
+                    echo "Checking Docker"
 
-                        def dockerExists = sh(script: 'which docker || echo "not_found"', returnStdout: true).trim()
+                    def dockerExists = sh(script: 'which docker || echo "not_found"', returnStdout: true).trim()
 
-                        if (dockerExists == 'not_found') {
-                            error "Docker is not installed or is not in PATH."
-                        }
-                        def dockerVersion = sh(script: 'docker version --format "{{.Server.Version}}" || echo "unavailable"', returnStdout: true).trim()
-
-                        if (dockerVersion == 'unavailable' || dockerVersion == '') {
-                            error "Docker daemon is not running or Jenkins cannot access Docker socket."
-                        }
-
-                        echo "Docker version: ${dockerVersion}"
+                    if (dockerExists == 'not_found') {
+                        error "Docker is not installed or is not in PATH."
                     }
+                    def dockerVersion = sh(script: 'docker version --format "{{.Server.Version}}" || echo "unavailable"', returnStdout: true).trim()
+
+                    if (dockerVersion == 'unavailable' || dockerVersion == '') {
+                        error "Docker daemon is not running or Jenkins cannot access Docker socket."
+                    }
+
+                    echo "Docker version: ${dockerVersion}"
                 }
             }
         }
