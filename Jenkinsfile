@@ -204,9 +204,14 @@ pipeline {
                         error "File ${valuesFile} not found!"
                     }
 
-                    sh """
-                        sed -i '/frontend:/,/image:/s/\\(tag:\\s*\\)".*"/\\1"${env.TAG_NAME}"/' cloned-deploy-repo/values.yaml
-                    """
+                    sh "cat cloned-deploy-repo/values.yaml | grep -A5 frontend"
+
+
+                    sh '''
+                        sed -i '/frontend:/,/^[^ ]/s/\\(tag:\\s*\\)".*"/\\1"${env.TAG_NAME}"/' cloned-deploy-repo/values.yaml
+                    '''
+
+                    sh "cat cloned-deploy-repo/values.yaml | grep -A5 frontend"
 
                     echo "Updated tag to ${env.TAG_NAME} in values.yaml"
                 }
