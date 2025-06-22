@@ -1,4 +1,4 @@
-import { NextApiRequest, NextApiResponse } from 'next';
+import { NextResponse } from "next/server";
 import * as Prometheus from 'prom-client';
 
 // Bật thu thập metrics mặc định
@@ -11,12 +11,12 @@ const requestCounter = new Prometheus.Counter({
   labelNames: ['path', 'method'],
 });
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  if (req.method === 'GET') {
-    requestCounter.labels(req.url ?? '', req.method).inc();
-    res.setHeader('Content-Type', Prometheus.register.contentType);
-    res.status(200).send(await Prometheus.register.metrics());
-  } else {
-    res.status(405).end();
-  }
+export async function GET(req: Request) {
+    try{
+        requestCounter.labels(req.url ?? '', req.method).inc();
+        const metrics = await Prometheus.register.metrics();
+        return NextResponse.json({ metrics: metrics }, { status: 200 });
+    } catch (error) {
+        return NextResponse.json({ success: false, error }, { status: 500 });
+    }
 }
