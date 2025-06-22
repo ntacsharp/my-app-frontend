@@ -1,22 +1,31 @@
-import { NextResponse } from "next/server";
-import * as Prometheus from 'prom-client';
+// app/api/metrics/route.ts
+import { NextResponse } from 'next/server';
+import { Counter, collectDefaultMetrics, register } from 'prom-client';
 
-// Bật thu thập metrics mặc định
-Prometheus.collectDefaultMetrics();
+// Chỉ gọi collectDefaultMetrics và tạo counter 1 lần
+collectDefaultMetrics();
 
-// Tạo custom metric
-const requestCounter = new Prometheus.Counter({
+const requestCounter = new Counter({
   name: 'frontend_requests_total',
   help: 'Total HTTP requests to frontend',
   labelNames: ['path', 'method'],
 });
 
 export async function GET(req: Request) {
-    try{
-        requestCounter.labels(req.url ?? '', req.method).inc();
-        const metrics = await Prometheus.register.metrics();
-        return NextResponse.json({ metrics: metrics }, { status: 200 });
-    } catch (error) {
-        return NextResponse.json({ success: false, error }, { status: 500 });
-    }
+  try {
+    const url = new URL(req.url);
+    requestCounter.labels(url.pathname, req.method).inc();
+
+    const metrics = await register.metrics();
+
+    // Trả về theo chuẩn Prometheus format
+    return new Response(metrics, {
+      status: 200,
+      headers: {
+        'Content-Type': register.contentType,
+      },
+    });
+  } catch (error: any) {
+    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+  }
 }
