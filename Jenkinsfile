@@ -243,15 +243,14 @@ pipeline {
     post {
         always {
             echo "Cleaning up Docker resources and Jenkins workspace..."
-
-            sh """
-                echo "Removing Docker images..."
-                docker rmi ${env.IMAGE_NAME}:${env.TAG_NAME} || true
-
-                echo "Pruning unused Docker resources..."
-                docker system prune -f || true
-            """
-
+            
+            container('docker'){
+                sh """
+                    docker rmi ${env.IMAGE_NAME}:${env.TAG_NAME} || true
+                    docker system prune -f || true
+                """
+            }
+            
             echo "Cleaning Jenkins workspace..."
             cleanWs()
         }
