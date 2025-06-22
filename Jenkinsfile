@@ -2,7 +2,6 @@ pipeline {
     agent {
         kubernetes {
             label 'docker-builder'
-            defaultContainer 'docker'
         }
     }
 
@@ -77,8 +76,8 @@ pipeline {
 
         stage('Check Docker') {
             steps {
-                // container('docker'){
-                    script {
+                container('docker'){
+                    // script {
                         echo "Checking Docker"
 
                         sh '''
@@ -100,8 +99,8 @@ pipeline {
                         }
 
                         echo "Docker version: ${dockerVersion}"
-                    }
-                // }
+                    // }
+                }
             }
         }
 
